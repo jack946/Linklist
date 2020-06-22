@@ -1,10 +1,11 @@
 ﻿//future
 #include <iostream>
 #include <string>
+#include <math.h>
 
 using namespace std;
 
-typedef int elemtype;
+typedef char elemtype;
 typedef struct LNode
 {
     elemtype data;
@@ -18,9 +19,19 @@ LNode* LocateElem(LNode* L, elemtype e);  //获取元素值为e的指针
 void insert(LNode* L, int i,elemtype e); //在L链表的第i个位置插入一个元素值为e的结点
 void del(LNode* L, int i);
 void info(LNode* L);  //输出链表元素和长度
+void sum(LNode* L);
+
+
+LNode* initstack(LNode* s);
+bool stackempty(LNode* s);
+void push(LNode* s,elemtype x);
+bool pop(LNode* s);
+elemtype gettop(LNode* L);
+bool match(LNode* L);
+
 int main()
 {
-    int x = 4;
+ //   int x = 4;
 
     /*
     LNode* p1 = NULL; //在函数内初始化对象，这里初始化了一个对象p1. 为什么必须NULL?
@@ -31,17 +42,25 @@ int main()
     cout << GetElem(p1,x)->data << endl;
     */
     
-    LNode* p2 = NULL;
-    p2 = listTI(p2);
+  //  LNode* p2 = NULL;
+  //  p2 = listTI(p2);
  //   cout << p2->next->data << endl;
  //   cout << p2->next->next->data << endl;
  //   cout << LocateElem(p2, x)->data << endl; 
  //   cout << GetElem(p2, x)->data << endl;
  //   insert(p2, 3, 555);
-    del(p2, 3);
-   info(p2);
+ //   del(p2, 3);
+ //  info(p2);
+ //  sum(p2);
+
+    
+    LNode* p3 = NULL;
+    match(p3);
     return 0;
 }
+
+
+//1.以下是链表
 
 LNode* listHI(LNode* L)
 {
@@ -129,4 +148,97 @@ void info(LNode* L)
    }
     cout << endl;
     cout << "length is " << cnt << endl;
+}
+
+void sum(LNode* L)
+{
+    int s=0;
+    LNode* p = L->next;
+    for(int i=0;p!= NULL;i++)  //注意这个地方的终止条件。当头指针刚移动到尾结点时，不会将尾结点的值赋给s
+    {
+        s += (p->data)*pow(10,i);
+        p = p->next;
+    }
+    cout << s << endl;
+}
+
+
+//2.以下是stack：
+
+LNode* initstack(LNode* s)
+{
+    s = new LNode;
+    LNode* top = s;
+    top->next = NULL;
+    return top;
+}
+
+bool stackempty(LNode* s)
+{
+    if (s->next == NULL)
+        return true;
+    else
+        return false;
+}
+
+void push(LNode* s, elemtype x)
+{
+    LNode* p = new LNode;
+    p->data=x;
+    p->next = s->next;
+    s->next=p;
+    cout << "push success:" << x << endl;
+}
+
+elemtype gettop(LNode* L)
+{
+    if(L->next!=NULL)  //必须加这个限制条件!
+    return L->next->data;
+}
+
+bool pop(LNode* s)  //外部调用，把当前值先传给x
+{
+    elemtype x;
+    if (stackempty(s))
+    {
+        cout << "pop failed:" <<endl;
+        return false;
+    }
+    else
+    {
+        LNode* p = s->next;
+            x = p->data;
+            s->next = p->next;
+            cout << "pop success:" <<x<< endl;
+            return true;
+    }
+}
+bool match(LNode* L)
+{
+    LNode* ps= initstack(L);
+    elemtype c;
+    elemtype temp;
+    while (cin >> c&& (c!=EOF) && ((c == '[') || (c == ']') || (c == '(') || (c == ')')))
+    {
+        if ((c == '(') || (c == '['))
+        {
+            push(ps, c);
+        }
+        else if (((c == ')') && (gettop(ps) == '(')) || ((c == ']') && (gettop(ps) == '[')))
+        {
+            pop(ps);
+        }
+        else
+            break;
+    }
+
+    if (stackempty(ps))
+    {
+        cout << "successful match" << endl;
+        return true;
+    }
+    else
+    {
+        cout << "match failed" << endl;
+    }
 }
